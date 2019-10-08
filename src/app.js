@@ -3,8 +3,11 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const logger = require('./logger');
 const { NODE_ENV } = require('./config');
 const foldersRouter = require('./folders/folders-router');
+const notesRouter = require('./notes/notes-router');
+
 
 
 const app = express();
@@ -16,7 +19,21 @@ const morganOption = (NODE_ENV === 'production')
 app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
+app.use(express.json());
 app.use('/api/folders', foldersRouter);
+app.use('/api/notes', notesRouter);
+
+// app.use(function validateBearerToken( req, res, next) {
+//   const authToken = process.env.API_TOKEN;
+//   const userToken = req.get('Authorization');
+
+//   if (!userToken || userToken.split(' ')[1] !== authToken) {
+//     logger.error('Unauthorized request received');
+//     return res.status(401).json({ error: 'Unauthorized request '});
+//   }
+
+//   next();
+// });
 
 
 app.get('/', (req, res) => {
